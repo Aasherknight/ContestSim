@@ -6,6 +6,7 @@
  */
 package skillTypes;
 
+import scoring.Judge;
 import skills.Skill;
 
 public class FrontAndCenter extends Skill
@@ -19,9 +20,7 @@ public class FrontAndCenter extends Skill
 	
 	@Override
 	public void use()
-	{
-		int a = appeal;
-		
+	{		
 		int order = scoreboard.getPokeOrder(user);
 		
 		if(order != 0)
@@ -34,12 +33,7 @@ public class FrontAndCenter extends Skill
 
 		}
 		
-		if(this.equals(user.GetLastMove()))
-			a -= 2;
-		
-		scoreboard.score[scoreboard.getPokeOrder(user)][scoreboard.getRound()] =
-				a + scoreboard.ExcitementMeter(this.style) + user.getCondition();
-
+		super.use();
 	}
 
 }

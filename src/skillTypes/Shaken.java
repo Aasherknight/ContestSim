@@ -21,12 +21,6 @@ public class Shaken extends Skill
 	{
 		user.setShaken();
 		
-		int a = appeal;
-		
-		if(this.equals(user.GetLastMove()))
-			a -= 2;
-		
-		scoreboard.score[scoreboard.getPokeOrder(user)][scoreboard.getRound()] =
-				a + scoreboard.ExcitementMeter(this.style) + user.getCondition();
+		super.use();
 	}
 }

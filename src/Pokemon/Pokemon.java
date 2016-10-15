@@ -17,11 +17,26 @@ import Resources.Constants;
 
 public class Pokemon
 {
+	/**
+	 * @desc The name of the species and the nickname of the pokemon if it has one
+	 */
 	protected String	nickname, name;
+	
+	/**
+	 * @desc An Item the pokemon is holding
+	 * 
+	 * Will be added in a later implementation
+	 */
 	//protected Item		held;
+	
+	/**
+	 * @desc The skills the pokemon is able to use to perform
+	 */
 	protected Skill		move1, move2, move3, move4, LastUsed = null;
 	
-	//Goes from 0-5; shaken = 3
+	/**
+	 * @desc Maintains the startle meter that can affect a pokemon's ability to perform
+	 */
 	private enum STARTLE {
 				FINE,
 				SHAKEN,
@@ -29,9 +44,11 @@ public class Pokemon
 				OBLIVIOUS
 		};
 		
-	public STARTLE startleMeter = STARTLE.FINE;
+	private STARTLE startleMeter = STARTLE.FINE;
 	
-	//Condition
+	/**
+	 * @desc Maintains a pokemon's condition, which can increase a skill's point value
+	 */
 	protected int conditionMeter = 0;
 	final protected int MAX_CONDITION = 3;
 	
@@ -45,13 +62,22 @@ public class Pokemon
 	 * 
 	 * Will be added in another iteration
 	 */
-	//protected boolean hasJudgesAttention = false;
+	protected boolean hasJudgesAttention = false;
 	
+	/**
+	 * @desc A flag for if the pokemon is shiny or not
+	 * @desc Stores the pokemons sprite and back spite
+	 */
 	private boolean		shiny;
 	public ImageIcon	sprite		= new ImageIcon(Pokemon.class.getResource("/Resources/pokeBackSprite/Default/0.png"));
 	public ImageIcon	backSprite	= new ImageIcon(Pokemon.class.getResource("/Resources/pokeBackSprite/Default/0.png"));
 
 
+	/**
+	 * @desc Creates a pokemon from a  file given
+	 * @param The file being read
+	 * @throws FileNotFoundException
+	 */
 	public Pokemon(File poke) throws FileNotFoundException
 	{
 		/* species
@@ -99,7 +125,11 @@ public class Pokemon
 		move4.attach(this);
 	}
 
-	private void spriteLookup(String name2)
+	/**
+	 * @desc Looks for the sprites from the name given
+	 * @param n The name given to be searched for
+	 */
+	private void spriteLookup(String n)
 	{
 		for(int i = 0; i<=Constants.SPECIES.length; i++)
 		{
@@ -120,6 +150,9 @@ public class Pokemon
 		}
 	}
 
+	/**
+	 * @desc Use moves from 1 to 4
+	 */
 	public void useMove1()
 	{
 		if(startleMeter!=STARTLE.STARTLED)
@@ -148,6 +181,10 @@ public class Pokemon
 		LastUsed = move4;
 	}
 	
+	/**
+	 * Retrieve information on what the last move used was
+	 * @return The last move
+	 */
 	public Skill GetLastMove()
 	{
 		return LastUsed;
@@ -188,16 +225,25 @@ public class Pokemon
 		return false;
 	}
 	
+	/**
+	 * @desc Set the pokemon to be oblivious to any startle attempts
+	 */
 	public void setOblivious()
 	{
 		startleMeter = STARTLE.OBLIVIOUS;
 	}
 	
+	/**
+	 * @desc Set the pokemon to be shaken, making it more likely to be startled
+	 */
 	public void setShaken()
 	{
 		startleMeter = STARTLE.SHAKEN;
 	}
 	
+	/**
+	 * @desc Describes what happens to the pokemon on a new round
+	 */
 	public void newRound()
 	{
 		if(cooldown==0)
@@ -211,24 +257,72 @@ public class Pokemon
 		}
 	}
 	
+	/**
+	 * @desc Some skills leave the pokemon unable to perform for one or multiple rounds
+	 * @param How many rounds the pokemon will be unable to perform
+	 */
 	public void setCooldown(int c)
 	{
 		cooldown = c;
 	}
 	
+	/**
+	 * @desc Retrieve the current condition of a pokemon
+	 * @return The point value of the condition
+	 */
 	public int getCondition()
 	{
 		return conditionMeter;
 	}
 	
+	/**
+	 * @desc Ups a pokemon's condition if it is not a max condition
+	 */
 	public void upCondition()
 	{
 		if(conditionMeter<3)
 			conditionMeter++;
 	}
 	
+	/**
+	 * @desc Drops a pokemon's condition if it is not 0
+	 */
+	public void downCondition()
+	{
+		if(conditionMeter!=0)
+			conditionMeter--;
+	}
+	
+	/**
+	 * @desc Removes a pokemon's condition entirely, setting it to zero
+	 */
 	public void removeCondition()
 	{
 		conditionMeter=0;
+	}
+
+	/**
+	 * @desc Flags that a pokemon has the judges attention
+	 */
+	public void gotJudgesAttention()
+	{
+		hasJudgesAttention = true;
+	}
+	
+	/**
+	 * @desc Flags that a pokemon has lost the judges attention
+	 */
+	public void lostJudgesAttention()
+	{
+		hasJudgesAttention = false;
+	}
+
+	/**
+	 * desc Returns whether a pokemon has the judges attention
+	 * @return Returns the value stored at the flag
+	 */
+	public boolean hasJudgesAttention()
+	{
+		return hasJudgesAttention;
 	}
 }

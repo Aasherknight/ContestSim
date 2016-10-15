@@ -191,8 +191,21 @@ public class Constants
 		};
 
 	/**
-	 * @desc Can be used multiple times without affecting appeal
+	 * @desc Protects from any jam attempt for this round
 	 * ##
+	 */
+	static public String[][] FOCUSED_2 = 
+		{
+				{"Defense Curl", "Detect", "Double Team", "Rapid Spin"},
+				{"Dive", "Mirror Coat"},
+				{"Minimize", "Rest"},
+				{"Calm Mind", "Substitute"},
+				{"Counter", "Endure", "Harden", "Stockpile"}
+		};
+	
+	/**
+	 * @desc Can be used multiple times without affecting appeal
+	 * ###
 	 */
 	static public String REPEATABLE[][] = 
 		{
@@ -286,7 +299,8 @@ public class Constants
 		};
 	
 	/**
-	 * @desc Shifts the JUDGE's attention from others
+	 * @desc Shifts the JUDGE's attention from others, cancels Combo Standby status for all
+	 * POKeMON that moved before you
 	 * ###
 	 */
 	static public String BREAKER[][] =
@@ -443,9 +457,9 @@ public class Constants
 	 * @desc The appeal works well if the user's condition is good
 	 * Number of stars
 	 * 0 = #
-	 * * = ####
-	 * ** = #######
-	 * *** = ##########
+	 * * = ###
+	 * ** = #####
+	 * *** = #######
 	 */
 	static public String STAR_POWER[][] = 
 		{
@@ -458,6 +472,7 @@ public class Constants
 	
 	/**
 	 * @desc The next appeal will be first
+	 * ###
 	 */
 	static public String GO_FIRST[][] = 
 		{
@@ -470,6 +485,7 @@ public class Constants
 	
 	/**
 	 * @desc The next appeal will be last
+	 * ###
 	 */
 	static public String GO_LAST[][] =
 		{
@@ -518,12 +534,12 @@ public class Constants
 				{"Tickle"},
 				{"Foresight", "Imprison", "Odor Sleuth", "Poison Fang", "Poison Gas", "Poison Tail", "Poisonpowder", "Toxic"}
 		};
-	/*
-	final static int COOL 	 = 0;
-	final static int BEAUTY  = 1;
-	final static int CUTE	 = 2;
-	final static int SMART	 = 3;
-	final static int TOUGH	 = 4;
+	/**
+	 * COOL 	 = 0;
+	 * BEAUTY 	 = 1;
+	 * CUTE		 = 2;
+	 * SMART	 = 3;
+	 * TOUGH	 = 4;
 	*/
 				
 			

@@ -10,6 +10,7 @@
 
 package skillTypes;
 
+import scoring.Judge;
 import skills.Skill;
 
 public class Mirrored extends Skill
@@ -18,36 +19,36 @@ public class Mirrored extends Skill
 	public Mirrored(String string, int s)
 	{
 		super(string, s);
+		appeal = 0;
 	}
 	
 	@Override
 	public void use()
 	{
-		int a = 0;
-		
+		appeal = 0;
+
 		int order = scoreboard.getPokeOrder(user);
 		int count = 0;
 		
-		while(order != 0)
+		if(order!=0)
+			order--;
+		
+		while(order >= 0)
 		{
 			int prevUserLoc = scoreboard.order[order-1];
 			int round = scoreboard.getRound();
 			
 			if(scoreboard.getPokemon(prevUserLoc).startle());
-				a += scoreboard.score[prevUserLoc][round];
+				appeal += scoreboard.score[prevUserLoc][round];
 				
 			order --;
 			count++;
 		}
 		
 		if(count!=0)
-			a = (int)(a/ count);
+			appeal = (int)(appeal/ count);
 		
-		if(this.equals(user.GetLastMove()))
-			a -= 2;
-		
-		scoreboard.score[scoreboard.getPokeOrder(user)][scoreboard.getRound()] =
-				a + scoreboard.ExcitementMeter(this.style) + user.getCondition();
+		super.use();
 	}
 
 }

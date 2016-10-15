@@ -6,6 +6,7 @@
 
 package skillTypes;
 
+import scoring.Judge;
 import skills.Skill;
 
 public class CopyCat extends Skill
@@ -21,17 +22,17 @@ public class CopyCat extends Skill
 	public void use()
 	{
 		int order = scoreboard.getPokeOrder(user);
-		int prevUserLoc = scoreboard.order[order-1];
-		int round = scoreboard.getRound();
+		if(order!=0)
+		{
+			int prevUserLoc = scoreboard.order[order-1];
+			int round = scoreboard.getRound();
 		
-		int a = scoreboard.score[prevUserLoc][round];
+			appeal = scoreboard.score[prevUserLoc][round];
+		}
+		else
+			appeal = 0;
 		
-		if(this.equals(user.GetLastMove()))
-			a -= 2;
-		
-		scoreboard.score[scoreboard.getPokeOrder(user)][scoreboard.getRound()] =
-				a + scoreboard.ExcitementMeter(this.style) + user.getCondition();
-
+		super.use();
 	}
 
 }

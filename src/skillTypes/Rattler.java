@@ -7,6 +7,7 @@
 
 package skillTypes;
 
+import scoring.Judge;
 import skills.Skill;
 
 public class Rattler extends Skill
@@ -21,13 +22,14 @@ public class Rattler extends Skill
 	@Override
 	public void use()
 	{
-		int a = appeal;
-		
 		int order = scoreboard.getPokeOrder(user);
 		
-		if(order != 0)
+		if(order!=3)
+			order++;
+		
+		if(order <= 3)
 		{
-			int userLoc = scoreboard.order[order+1];
+			int userLoc = scoreboard.order[order];
 			
 			while(userLoc<=3)
 			{
@@ -37,12 +39,7 @@ public class Rattler extends Skill
 
 		}
 		
-		if(this.equals(user.GetLastMove()))
-			a -= 2;
-		
-		scoreboard.score[scoreboard.getPokeOrder(user)][scoreboard.getRound()] =
-				a + scoreboard.ExcitementMeter(this.style) + user.getCondition();
-
+		super.use();
 	}
 
 }

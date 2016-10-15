@@ -7,12 +7,15 @@ package skills;
 
 import Pokemon.Pokemon;
 import Resources.Constants;
-import Scoring.ScoreBoard;
+import scoring.Judge;
+import scoring.ScoreBoard;
 import skillTypes.*;
 
 public class Skill
 {
-	
+	/**
+	 * @desc Keeps track of the constants of the game, the user of this move, and the only scoreboard
+	 */
 	protected Pokemon user;
 	protected ScoreBoard scoreboard;
 	
@@ -28,6 +31,7 @@ public class Skill
 			FRONT_AND_CENTER,
 			JAMMER,
 			FOCUSED,
+			FOCUSED_2,
 			REPEATABLE,
 			SUPER_MOVE,
 			DETONATION,
@@ -55,11 +59,19 @@ public class Skill
 			STRUGGLE
 	}
 	
+	/**
+	 * @desc Information that is vital to a skill being used
+	 */
 	protected SKILL_TYPE skillType;
 	protected int style;
 	protected int appeal;
 	protected String name;
 	
+	/**
+	 * @desc Creates a default skill
+	 * @param name of the skill
+	 * @param the type of move it is
+	 */
 	public Skill(String n, int s)
 	{
 		name = n;
@@ -78,10 +90,29 @@ public class Skill
 		if(this.equals(user.GetLastMove()))
 			a -= 2;
 		
+		int multiplier = 1;
+		
+		if(Judge.getJudge().isCombo())
+		{
+			if(user.hasJudgesAttention())
+				multiplier = 2;
+			else
+				user.gotJudgesAttention();
+		}
+		else
+			if(user.hasJudgesAttention())
+				user.lostJudgesAttention();
+		
 		scoreboard.score[scoreboard.getPokeOrder(user)][scoreboard.getRound()] =
-				a + scoreboard.ExcitementMeter(this.style) + user.getCondition();
+				(a + scoreboard.ExcitementMeter(this.style) + user.getCondition()) * multiplier;
+
 	}
 	
+	/**
+	 * @desc Looks for a skill from the provided name, if the name cannot be found it returns the move Struggle
+	 * @param The name of the skill
+	 * @return The skill that was being looked for
+	 */
 	public static Skill skillLookup(String n)
 	{
 		boolean found = false;
@@ -126,6 +157,19 @@ public class Skill
 						if(n.equalsIgnoreCase(Constants.FOCUSED[s][nameLoc]))
 						{
 							return new Focused(Constants.FOCUSED[s][nameLoc],s);
+						}
+					}
+				}
+				type = SKILL_TYPE.FOCUSED_2;
+				break;
+			case FOCUSED_2:
+				for(int s = 0;s <= 4;s++)
+				{
+					for(int nameLoc = 0; nameLoc<Constants.FOCUSED_2[s].length; nameLoc++)
+					{
+						if(n.equalsIgnoreCase(Constants.FOCUSED_2[s][nameLoc]))
+						{
+							return new Focused_2(Constants.FOCUSED_2[s][nameLoc],s);
 						}
 					}
 				}
@@ -509,13 +553,25 @@ public class Skill
 				type = SKILL_TYPE.STRUGGLE;
 				break;
 			default:
-				return new Struggle(Constants.STRUGGLE[0][0],1,"Struggle");
-				break;
+				return new Struggle(Constants.STRUGGLE[0][0],0);
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * @desc Retrieves the type of style a skill is
+	 * @return The value that corresponds to the style
+	 */
+	public int getStyle()
+	{
+		return style;
+	}
+	
+	/**
+	 * @desc Allows a pokemon to attach the move to themself
+	 * @param The pokemon that wishes to have this skill
+	 */
 	public void attach(Pokemon pokemon)
 	{
 		user = pokemon;

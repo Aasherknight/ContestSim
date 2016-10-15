@@ -8,6 +8,7 @@
 */
 package skillTypes;
 
+import scoring.Judge;
 import skills.Skill;
 
 public class CauseEffect extends Skill
@@ -43,8 +44,21 @@ public class CauseEffect extends Skill
 		if(this.equals(user.GetLastMove()))
 			a -= 2;
 		
+		int multiplier = 1;
+		
+		if(Judge.getJudge().isCombo())
+		{
+			if(user.hasJudgesAttention())
+				multiplier = 2;
+			else
+				user.gotJudgesAttention();
+		}
+		else
+			if(user.hasJudgesAttention())
+				user.lostJudgesAttention();
+		
 		scoreboard.score[scoreboard.getPokeOrder(user)][scoreboard.getRound()] =
-				a + scoreboard.ExcitementMeter(this.style) + user.getCondition();
+				(a + scoreboard.ExcitementMeter(this.style) + user.getCondition()) * multiplier;
 	}
 
 }

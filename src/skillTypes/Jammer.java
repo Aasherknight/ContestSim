@@ -6,6 +6,7 @@
  */
 package skillTypes;
 
+import scoring.Judge;
 import skills.Skill;
 
 public class Jammer extends Skill
@@ -19,26 +20,24 @@ public class Jammer extends Skill
 
 	@Override
 	public void use()
-	{
-		int a = appeal;
-		
+	{		
 		int order = scoreboard.getPokeOrder(user);
 		
-		if(order != 0)
+		if(order!=0)
+			order--;
+			
+		while(order >= 0)
 		{
-			int prevUserLoc = scoreboard.order[order-1];
+			int prevUserLoc = scoreboard.order[order];
 			int round = scoreboard.getRound();
 			
 			if(scoreboard.getPokemon(prevUserLoc).startle());
 				scoreboard.score[prevUserLoc][round] -= 3;
 
+			order--;
 		}
 		
-		if(this.equals(user.GetLastMove()))
-			a -= 2;
-		
-		scoreboard.score[scoreboard.getPokeOrder(user)][scoreboard.getRound()] =
-				a + scoreboard.ExcitementMeter(this.style) + user.getCondition();
+		super.use();
 	}
 }
 

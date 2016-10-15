@@ -6,6 +6,7 @@
  */
 package skillTypes;
 
+import scoring.Judge;
 import skills.Skill;
 
 public class HalveScore extends Skill
@@ -20,28 +21,26 @@ public class HalveScore extends Skill
 	@Override
 	public void use()
 	{
-		int a = appeal;
-		
 		int order = scoreboard.getPokeOrder(user);
 		
-		if(order != 0)
+		if(order!=0)
+			order--;
+		
+		if(order >= 0)
 		{
-			int prevUserLoc = scoreboard.order[order-1];
+			int prevUserLoc = scoreboard.order[order];
 			int round = scoreboard.getRound();
 			
 			while(prevUserLoc>0)
 			{
 				if(scoreboard.getPokemon(prevUserLoc).startle());
-					scoreboard.score[prevUserLoc][round] -= 1;
+					scoreboard.score[prevUserLoc][round] = (int) ((scoreboard.score[prevUserLoc][round]/2) + .5);
 				prevUserLoc--;
 			}
 		}
 		
-		if(this.equals(user.GetLastMove()))
-			a -= 2;
-		
-		scoreboard.score[scoreboard.getPokeOrder(user)][scoreboard.getRound()] =
-				a + scoreboard.ExcitementMeter(this.style) + user.getCondition();
+		super.use();
+
 
 	}
 
