@@ -3,7 +3,7 @@
  * 
  * @desc Keeps track of the scores between the contestants and the rounds
  */
-package Scoring;
+package scoring;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -12,10 +12,16 @@ import Pokemon.Pokemon;
 
 public class ScoreBoard
 {
-	//Is a singleton
+	/**
+	 * @desc There can only be one scoreboard in the game
+	 * @desc The type of contest the game shall be
+	 */
 	private static ScoreBoard scoreboard;
 	private int contest_type;
 	
+	/**
+	 * @desc A set of flags for when order is determined
+	 */
 	private boolean randomOrder;
 	private Pokemon goesFirst;
 	private Pokemon goesLast;
@@ -36,6 +42,7 @@ public class ScoreBoard
 	
 	/**
 	 * @desc Manages the excitement meter
+	 * @desc A flag for if the excitement meter can move or not
 	 */
 	private enum EXCITEMENT {
 		NONE,
@@ -45,8 +52,8 @@ public class ScoreBoard
 		FOUR,
 		EXCITED
 	}
-	
-	private EXCITEMENT meter = EXCITEMENT.NONE;
+	private EXCITEMENT E_meter = EXCITEMENT.NONE;
+	boolean frozenExcitement;
 	
 	/**
 	 * @desc manages the scores of each of the contestant's scores in the 4 rounds
@@ -65,6 +72,9 @@ public class ScoreBoard
 	 */
 	public int order[] = {0,1,2,3};
 	
+	/**
+	 * @desc A private constructor to allow for a singleton
+	 */
 	private ScoreBoard()
 	{
 		round = ROUND.ROUND_1;
@@ -74,21 +84,35 @@ public class ScoreBoard
 		goesLast = null;
 	}
 	
+	/**
+	 * @desc Allows for access to the scoreboard without creating a new one
+	 * @return The only instance of the scoreboard
+	 */
 	public static synchronized ScoreBoard getScoreBoard()
 	{
 		if(scoreboard==null)
 			scoreboard = new ScoreBoard();
 		return scoreboard;
 	}
-	
+
+	/**
+	 * @desc Part of initialization of the game, adds a contestant to the scoreboard
+	 * @param contestant
+	 */
 	public void addContestant(Pokemon contestant)
 	{
 		if(contestant!=null&&contestants.size()<4)
 			contestants.add(contestant);
 	}
 	
+	/**
+	 * @desc Moves the game into the next round, and ends the game if round 4 is ended
+	 */
 	public void nextRound()
 	{
+		getOrder();
+		frozenExcitement = false;
+		
 		switch (round)
 		{
 		case ROUND_1:
@@ -103,12 +127,12 @@ public class ScoreBoard
 		case ROUND_4:
 			//End the sim, tally scores
 			break;
-		}
-		
-		getOrder();
-		
+		}	
 	}
 	
+	/**
+	 * @desc Determines the order for the next round
+	 */
 	private void getOrder()
 	{
 		int p1 = score[0][getRound()];
@@ -200,6 +224,11 @@ public class ScoreBoard
 		order[3] = search[3][1];
 	}
 
+	/**
+	 * @desc Looks for a contestant in the contest, and if found returns their order in the current round
+	 * @param contestant
+	 * @return the position of the contestant given
+	 */
 	public int getPokeOrder(Pokemon contestant)
 	{
 		int pos = contestants.indexOf(contestant);
@@ -213,117 +242,165 @@ public class ScoreBoard
 		return 0;
 	}
 
+	/**
+	 * @desc Looks at the position of a contestant and returns the contestant
+	 * @param Location to be searched
+	 * @return The contestant from the specified location
+	 */
 	public Pokemon getPokemon(int loc)
 	{
 		return (Pokemon) contestants.get(loc);
 	}
 	
+	/**
+	 * @desc Returns the round that the game is currently in
+	 * @return The round in integer form
+	 */
 	public int getRound()
 	{
 		int r = 1;
 		switch (round)
 		{
 		case ROUND_1:
-			r = 1;
+			r = 0;
 		case ROUND_2:
-			r = 2;
+			r = 1;
 		case ROUND_3:
-			r = 3;
+			r = 2;
 		case ROUND_4:
-			r = 4;
+			r = 3;
 		}
 		
 		return r;
 	}
 	
+	/**
+	 * @desc Returns the type of contest is taking place
+	 * @return The contest type
+	 */
 	public int getType()
 	{
 		return contest_type;
 	}
 	
+	/**
+	 * @desc Manages the Excitement meter, and returns a point value for a contestants move
+	 * @param The type of move that had been used
+	 * @return The point value for that move
+	 */
 	public int ExcitementMeter(int type)
 	{
-		switch(meter)
-		{
-		case NONE:
-			if(type==contest_type)
+		if(!frozenExcitement)
+			switch(E_meter)
 			{
-				meter = EXCITEMENT.ONE;
-				return 1;
+			case NONE:
+				if(type==contest_type)
+				{
+					E_meter = EXCITEMENT.ONE;
+					return 1;
+				}
+				else
+					return -1;
+			case ONE:
+				if(type==contest_type)
+				{
+					E_meter = EXCITEMENT.TWO;
+					return 1;
+				}
+				else
+				{
+					E_meter = EXCITEMENT.NONE;
+					return -1;
+				}
+			case TWO:
+				if(type==contest_type)
+				{
+					E_meter = EXCITEMENT.THREE;
+					return 1;
+				}
+				else
+				{
+					E_meter = EXCITEMENT.ONE;
+					return -1;
+				}
+			case THREE:
+				if(type==contest_type)
+				{
+					E_meter = EXCITEMENT.FOUR;
+					return 1;
+				}
+				else
+				{
+					E_meter = EXCITEMENT.TWO;
+					return -1;
+				}
+			case FOUR:
+				if(type==contest_type)
+				{
+					E_meter = EXCITEMENT.EXCITED; //play animation for this
+					E_meter = EXCITEMENT.NONE;
+					return 6;
+				}
+				else
+				{
+					E_meter = EXCITEMENT.THREE;
+					return -1;
+				}
 			}
-			else
-				return -1;
-		case ONE:
-			if(type==contest_type)
-			{
-				meter = EXCITEMENT.TWO;
-				return 1;
-			}
-			else
-			{
-				meter = EXCITEMENT.NONE;
-				return -1;
-			}
-		case TWO:
-			if(type==contest_type)
-			{
-				meter = EXCITEMENT.THREE;
-				return 1;
-			}
-			else
-			{
-				meter = EXCITEMENT.ONE;
-				return -1;
-			}
-		case THREE:
-			if(type==contest_type)
-			{
-				meter = EXCITEMENT.FOUR;
-				return 1;
-			}
-			else
-			{
-				meter = EXCITEMENT.TWO;
-				return -1;
-			}
-		case FOUR:
-			if(type==contest_type)
-			{
-				meter = EXCITEMENT.EXCITED;
-				return 1;
-			}
-			else
-			{
-				meter = EXCITEMENT.THREE;
-				return -1;
-			}
-		case EXCITED:
-			if(type==contest_type)
-			{
-				meter = EXCITEMENT.NONE;
-				return 6;
-			}
-			else
-			{
-				meter = EXCITEMENT.FOUR;
-				return -1;
-			}
-		}
 		return  0;
 	}
 
+	/**
+	 * @desc Freezes the excitement meter until next round
+	 */
+	public void KillExcitement()
+	{
+		frozenExcitement = true;
+	}
+	
+	/**
+	 * @desc Flags a pokemon to go first in the next round
+	 * @param Pokemon that wishes to go first
+	 */
 	public void goFirst(Pokemon poke)
 	{
 		goesFirst = poke;
 	}
 	
+	/**
+	 * @desc Flags a pokemon to go last in the next round
+	 * @param Pokemon that wishes to go last
+	 */
 	public void goLast(Pokemon poke)
 	{
 		goesLast = poke;
 	}
 	
+	/**
+	 * @desc Flags that the order for the next round is to be randomized
+	 */
 	public void randomizeOrder()
 	{
 		randomOrder = true;
+	}
+
+	public int getExcitement()
+	{
+		switch(E_meter)
+		{
+		case NONE:
+			return 0;
+		case ONE:
+			return 1;
+		case TWO:
+			return 2;
+		case THREE:
+			return 3;
+		case FOUR:
+			return 4;
+		default:
+			return 0;
+		}
+		
 	}
 }
