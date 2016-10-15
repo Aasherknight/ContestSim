@@ -1,3 +1,4 @@
+package Pokemon;
 
 public class Item
 {
